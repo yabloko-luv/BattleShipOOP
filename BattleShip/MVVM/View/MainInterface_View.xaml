@@ -1,0 +1,200 @@
+﻿<UserControl x:Class="WPF_App.MVVM.View.MainInterface_View"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:WPF_App.MVVM.ViewModel"
+             xmlns:fade="clr-namespace:VsrFade.Controls;assembly=VsrFade"
+             xmlns:local="clr-namespace:WPF_App.MVVM.View"
+             xmlns:toast="clr-namespace:ToastManager;assembly=ToastManager"             
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <!-- Контекст данных для дизайнера -->
+    <d:UserControl.DataContext>
+        <vm:MainInterface_ViewModel/>
+    </d:UserControl.DataContext>
+
+    <!-- Ресурсы управления -->
+    <UserControl.Resources>
+        <!-- Стиль для Path элементов -->
+        <Style TargetType="Path">
+            <Setter Property="Stretch" Value="Uniform" />
+            <Setter Property="Height" Value="15" />
+            <Setter Property="Fill" Value="White" />
+        </Style>
+
+        <!-- Стиль для кнопок с анимацией затухания -->
+        <Style TargetType="fade:FadeRadioButton">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+            <Setter Property="Background" Value="{DynamicResource ButtonBackground}"/>
+            <Setter Property="DisabledBackgroundColor" Value="#5555" />
+        </Style>
+
+        <!-- Стиль для переключателей с анимацией затухания -->
+        <Style TargetType="fade:FadeToggleButton">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+            <Setter Property="Background" Value="{DynamicResource ButtonBackground}"/>
+            <Setter Property="DisabledBackgroundColor" Value="#5555" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
+        <ContentControl Content="{Binding ViewNavigator.CurrentView}" Margin="0,0,0,0" 
+                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+        <!-- НАВИГАЦИОННАЯ ПАНЕЛЬ -->
+        <Border x:Name="NavigationBorder" CornerRadius="0,0,0,5" Visibility="Collapsed">
+            <Border.Resources>
+                <!-- Анимация плавности -->
+                <CircleEase EasingMode="EaseOut" x:Key="CircleEaseOut"/>
+
+                <!-- Стиль для кнопок навигации -->
+                <Style TargetType="fade:FadeRadioButton">
+                    <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
+                    <Setter Property="DisabledBackgroundColor" Value="{DynamicResource ButtonDisabledBackground}" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+
+                <!-- Стиль для StackPanel с эффектом затемнения при отключении -->
+                <Style TargetType="StackPanel">
+                    <Setter Property="Opacity" Value="1" />
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.3" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+                <!-- Стиль для изображений в заголовках -->
+                <Style TargetType="Image" x:Key="CaptionImage">
+                    <Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality" />
+                    <Setter Property="Margin" Value="10" />
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                    <Style.Triggers>
+                        <!-- Анимация увеличения при наведении -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Grid.ZIndex" Value="1" />
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                </Setter.Value>
+                            </Setter>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" 
+                                                         To="1.2" Duration="0:0:0.25" EasingFunction="{StaticResource CircleEaseOut}"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" 
+                                                         To="1.2" Duration="0:0:0.25" EasingFunction="{StaticResource CircleEaseOut}"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+                <!-- Стиль для векторных иконок в заголовках -->
+                <Style TargetType="Path" x:Key="CaptionPath">
+                    <Setter Property="Stretch" Value="Uniform" />
+                    <Setter Property="Fill" Value="White" />
+                    <Setter Property="MaxWidth" Value="60" />
+                    <Setter Property="MaxHeight" Value="60" />
+                    <Setter Property="Margin" Value="5" />
+                </Style>
+
+                <!-- Стиль для контейнера векторных иконок -->
+                <Style TargetType="Border" x:Key="CaptionBorderPath">
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                    <Style.Triggers>
+                        <!-- Анимация увеличения при наведении -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Grid.ZIndex" Value="1" />
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                </Setter.Value>
+                            </Setter>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" 
+                                                         To="1.2" Duration="0:0:0.25" EasingFunction="{StaticResource CircleEaseOut}"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" 
+                                                         To="1.2" Duration="0:0:0.25" EasingFunction="{StaticResource CircleEaseOut}"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+                <!-- Стиль для текста заголовков -->
+                <Style TargetType="TextBlock" x:Key="CaptionTextBlock">
+                    <Setter Property="FontSize" Value="15" />
+                    <Setter Property="FontWeight" Value="Medium" />
+                    <Setter Property="Foreground" Value="Black" />
+                    <Setter Property="Margin" Value="5" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                </Style>
+            </Border.Resources>
+
+            <!-- Контрол навигации -->
+            <ItemsControl x:Name="Navigator" ItemsSource="{Binding ViewNavigator.ViewsCollectionView}" 
+                         Width="80" HorizontalAlignment="Left">
+
+                <!-- Панель с одним столбцом -->
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="1" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <!-- Шаблон элемента навигации -->
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <fade:FadeRadioButton GroupName="NavigationPanel" Cursor="Hand" 
+                                              Command="{Binding NavigateCommand}" 
+                                              IsChecked="{Binding IsSelected, Mode=OneWay}">
+                            <StackPanel Orientation="Vertical">
+                                <!-- Визуальный элемент (иконка) -->
+                                <ContentControl Content="{Binding Visual}">
+                                    <ContentControl.Resources>
+                                        <!-- Шаблон для изображений -->
+                                        <DataTemplate DataType="{x:Type BitmapImage}">
+                                            <Image Source="{Binding }" Style="{StaticResource CaptionImage}" />
+                                        </DataTemplate>
+                                        <!-- Шаблон для векторной графики -->
+                                        <DataTemplate DataType="{x:Type StreamGeometry}">
+                                            <Border Background="#01000000" Style="{StaticResource CaptionBorderPath}">
+                                                <Path Data="{Binding }" Style="{StaticResource CaptionPath}" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </ContentControl.Resources>
+                                </ContentControl>
+
+                                <!-- Текст заголовка -->
+                                <TextBlock Text="{Binding Caption}" Style="{StaticResource CaptionTextBlock}"/>
+                            </StackPanel>
+                        </fade:FadeRadioButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+
+        <!-- КОМПОНЕНТ УВЕДОМЛЕНИЙ -->
+        <toast:Toast ToastName="MainInterfaceToast" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+    </Grid>
+</UserControl>

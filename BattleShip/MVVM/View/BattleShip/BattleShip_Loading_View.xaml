@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="WPF_App.MVVM.View.BattleShip_Loading_View"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_App.MVVM.View"
+             xmlns:fade="clr-namespace:VsrFade.Controls;assembly=VsrFade"
+             xmlns:vm="clr-namespace:WPF_App.MVVM.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Style TargetType="fade:FadeButton">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="CornerRadius" Value="5" />
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Background" Value="LightBlue"/>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#FF1E1E1E">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+            <!-- Заголовок -->
+            <TextBlock Text="Ждем игрока" 
+                       FontSize="48" 
+                       Foreground="#FF4FC3F7" 
+                       FontWeight="Bold"
+                       Margin="0,0,0,40"
+                       TextAlignment="Center"/>
+
+            <!-- Индикатор загрузки -->
+            <Border Width="300" 
+                    Height="8" 
+                    Background="#333" 
+                    CornerRadius="4"
+                    Margin="0,0,0,20">
+                <Border Width="{Binding LoadingProgress}" 
+                        HorizontalAlignment="Left"
+                        Background="#FF4FC3F7" 
+                        CornerRadius="4"/>
+            </Border>
+
+            <!-- Текст статуса -->
+            <TextBlock Text="{Binding LoadingStatus}" 
+                       FontSize="16" 
+                       Foreground="#FFB0BEC5"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,40"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

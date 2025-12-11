@@ -1,0 +1,255 @@
+﻿<UserControl x:Class="WPF_App.MVVM.View.BattleShip_ShipPlacement_View"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_App.MVVM.View"
+             xmlns:fade="clr-namespace:VsrFade.Controls;assembly=VsrFade"
+             xmlns:toast="clr-namespace:ToastManager;assembly=ToastManager"   
+             xmlns:vm="clr-namespace:WPF_App.MVVM.ViewModel"   
+             xmlns:wpf="clr-namespace:WPF_App.Core.WPF" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.DataContext>
+        <vm:BattleShip_ShipPlacement_ViewModel/>
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <Style TargetType="Path">
+            <Setter Property="Stretch" Value="Uniform" />
+            <Setter Property="Height" Value="15" />
+            <Setter Property="Fill" Value="White" />
+        </Style>
+        <Style TargetType="fade:FadeButton">
+            <Setter Property="CornerRadius" Value="5" />
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Background" Value="LightGreen"/>
+        </Style>
+
+        <!-- Стиль для квадратных сегментов корабля -->
+        <Style x:Key="ShipSegment" TargetType="Border">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Background" Value="#78909C"/>
+            <Setter Property="BorderBrush" Value="#546E7A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="2"/>
+        </Style>
+
+        <!-- Стиль для квадратных кораблей -->
+        <Style TargetType="fade:FadeRadioButton" x:Key="ShipRadioButton">
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="GroupName" Value="ShipSize"/>
+            <Setter Property="Padding" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                    <Setter Property="CornerRadius" Value="5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <d:Border Margin="-20">
+            <d:Border.Background>
+                <SolidColorBrush Color="Gray"/>
+            </d:Border.Background>
+            <d:Border.Effect>
+                <BlurEffect Radius="20"/>
+            </d:Border.Effect>
+        </d:Border>
+
+        <DockPanel>
+            <!--SHIPS-->
+            <Border Background="#2FFF" BorderBrush="#5FFF" BorderThickness="1" CornerRadius="5" Margin="10">
+                <DockPanel Margin="20">
+                    <DockPanel.Resources>
+                        <Style TargetType="fade:FadeRadioButton" BasedOn="{StaticResource ShipRadioButton}" x:Key="VerticalShip">
+                            <Setter Property="CornerRadius" Value="5,5,25,25" />
+                        </Style>
+                        <Style TargetType="fade:FadeRadioButton" BasedOn="{StaticResource ShipRadioButton}" x:Key="HorizontalShip">
+                            <Setter Property="CornerRadius" Value="5,25,25,5" />
+                        </Style>
+                    </DockPanel.Resources>
+
+                    <fade:FadeButton DockPanel.Dock="Bottom" Background="LightGreen" Height="30" Width="auto"
+                                 Command="{Binding ConfirmShipPlacementCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="В бой"/>
+                        </StackPanel>
+                    </fade:FadeButton>
+
+                    <fade:FadeButton DockPanel.Dock="Bottom" Background="LightBlue" Height="30" Width="auto"
+                                 Command="{Binding RandomizedShipPlacementCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Случайно"/>
+                        </StackPanel>
+                    </fade:FadeButton>
+
+                    <UniformGrid DockPanel.Dock="Top" Columns="1">
+                        <UniformGrid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="FontSize" Value="15"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="FontWeight" Value="Medium"/>
+                            </Style>
+                        </UniformGrid.Resources>
+
+                        <!-- Корабль размера 2 -->
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Size 2 :" FontWeight="Bold" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding TwoShipCount, StringFormat={}{0} / 1}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <!-- Вертикальный корабль 2 -->
+                                <fade:FadeRadioButton Width="24" Height="44" Command="{Binding ChangeShipSizeCommand}" CommandParameter="2V" Style="{StaticResource VerticalShip}">
+                                    <StackPanel>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,2,2,0"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,0,2,2"/>
+                                    </StackPanel>
+                                </fade:FadeRadioButton>
+
+                                <!-- Горизонтальный корабль 2 -->
+                                <fade:FadeRadioButton Width="44" Height="24" Command="{Binding ChangeShipSizeCommand}" CommandParameter="2H" Style="{StaticResource HorizontalShip}" IsChecked="True" Margin="10,0,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,2,0,2"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="0,2,2,2"/>
+                                    </StackPanel>
+                                </fade:FadeRadioButton>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Корабль размера 3 -->
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Size 3 :" FontWeight="Bold" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding ThreeShipCount, StringFormat={}{0} / 2}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <!-- Вертикальный корабль 3 -->
+                                <fade:FadeRadioButton Width="24" Height="64" Command="{Binding ChangeShipSizeCommand}" CommandParameter="3V" Style="{StaticResource VerticalShip}">
+                                    <StackPanel>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,2,2,0"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,0,2,0"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,0,2,2"/>
+                                    </StackPanel>
+                                </fade:FadeRadioButton>
+
+                                <!-- Горизонтальный корабль 3 -->
+                                <fade:FadeRadioButton Width="64" Height="24" Command="{Binding ChangeShipSizeCommand}" CommandParameter="3H" Style="{StaticResource HorizontalShip}" Margin="10,0,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,2,0,2"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="0,2,0,2"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="0,2,2,2"/>
+                                    </StackPanel>
+                                </fade:FadeRadioButton>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Корабль размера 4 -->
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Size 4 :" FontWeight="Bold" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding FourShipCount, StringFormat={}{0} / 1}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <!-- Вертикальный корабль 4 -->
+                                <fade:FadeRadioButton Width="24" Height="84" Command="{Binding ChangeShipSizeCommand}" CommandParameter="4V" Style="{StaticResource VerticalShip}">
+                                    <StackPanel>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,2,2,0"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,0,2,0"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,0,2,0"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,0,2,2"/>
+                                    </StackPanel>
+                                </fade:FadeRadioButton>
+
+                                <!-- Горизонтальный корабль 4 -->
+                                <fade:FadeRadioButton Width="84" Height="24" Command="{Binding ChangeShipSizeCommand}" CommandParameter="4H" Style="{StaticResource HorizontalShip}" Margin="10,0,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,2,0,2"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="0,2,0,2"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="0,2,0,2"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="0,2,2,2"/>
+                                    </StackPanel>
+                                </fade:FadeRadioButton>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Корабль размера 5 -->
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Size 5 :" FontWeight="Bold" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding FiveShipCount, StringFormat={}{0} / 1}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <!-- Вертикальный корабль 5 -->
+                                <fade:FadeRadioButton Width="24" Height="104" Command="{Binding ChangeShipSizeCommand}" CommandParameter="5V" Style="{StaticResource VerticalShip}">
+                                    <StackPanel>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,2,2,0"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,0,2,0"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,0,2,0"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,0,2,0"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,0,2,2"/>
+                                    </StackPanel>
+                                </fade:FadeRadioButton>
+
+                                <!-- Горизонтальный корабль 5 -->
+                                <fade:FadeRadioButton Width="104" Height="24" Command="{Binding ChangeShipSizeCommand}" CommandParameter="5H" Style="{StaticResource HorizontalShip}" Margin="10,0,0,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Style="{StaticResource ShipSegment}" Margin="2,2,0,2"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="0,2,0,2"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="0,2,0,2"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="0,2,0,2"/>
+                                        <Border Style="{StaticResource ShipSegment}" Margin="0,2,2,2"/>
+                                    </StackPanel>
+                                </fade:FadeRadioButton>
+                            </StackPanel>
+                        </StackPanel>
+                    </UniformGrid>
+                </DockPanel>
+            </Border>
+
+            <!--GRID-->
+            <Viewbox Stretch="Uniform" Margin="50" HorizontalAlignment="Center">
+                <Border CornerRadius="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Border.Background>
+                        <SolidColorBrush Color="DarkGray"/>
+                    </Border.Background>
+                    <Grid x:Name="MyFieldGrid" Height="400" Width="400" Loaded="MyFieldGrid_Loaded" Margin="40,40,10,10">
+                        <Grid.Resources>
+                            <Style TargetType="local:BorderCell">
+                                <Setter Property="Background" Value="#3FFF"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.HasShip, RelativeSource={RelativeSource Mode=Self}}" Value="true">
+                                        <Setter Property="Background" Value="#5FFF"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DataContext.IsMissed, RelativeSource={RelativeSource Mode=Self}}" Value="true">
+                                        <Setter Property="Background" Value="LightGreen"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DataContext.IsHit, RelativeSource={RelativeSource Mode=Self}}" Value="true">
+                                        <Setter Property="Background" Value="Red"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontSize" Value="20"/>
+                                <Setter Property="Foreground" Value="#9000"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="TextAlignment" Value="Center"/>
+                            </Style>
+                        </Grid.Resources>
+                    </Grid>
+                </Border>
+            </Viewbox>
+        </DockPanel>
+    </Grid>
+</UserControl>
